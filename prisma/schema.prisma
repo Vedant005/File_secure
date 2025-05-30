@@ -40,10 +40,11 @@ model File {
 model Job {
   id            Int      @id @default(autoincrement())
   file          File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
-  fileId        Int
+  fileId        Int      @unique
   job_type      String
   status        String
   error_message String?
   started_at    DateTime?
   completed_at  DateTime?
 }
+
