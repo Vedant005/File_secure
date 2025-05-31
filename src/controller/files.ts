@@ -1,15 +1,28 @@
-import { Request, Response } from "express";
+import { Request, Response, RequestHandler } from "express";
 import { prisma } from "../prisma";
 import { fileQueue } from "../jobs/queue";
 
-export const uploadFile = async (req: Request, res: Response) => {
-  const userId = req.user?.id;
-  const file = req.file;
-  const { title, description } = req.body;
-
-  if (!file) return res.status(400).json({ error: "No file uploaded" });
-
+export const uploadFile = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
+    console.log(req);
+
+    const userId = req.user?.id;
+
+    const { title, description } = req.body;
+
+    if (!userId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    const file = req.file;
+    if (!file) {
+      res.status(400).json({ error: "No file uploaded" });
+      return;
+    }
+
     const newFile = await prisma.file.create({
       data: {
         userId,
@@ -29,25 +42,35 @@ export const uploadFile = async (req: Request, res: Response) => {
   }
 };
 
-export const getFileStatus = async (req: Request, res: Response) => {
-  const userId = req.user?.id;
-  const fileId = Number(req.params.id);
+export const getFileStatus = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    const fileId = Number(req.params.id);
 
-  const file = await prisma.file.findUnique({
-    where: { id: fileId },
-  });
+    const file = await prisma.file.findUnique({
+      where: { id: fileId },
+    });
 
-  if (!file || file.userId !== userId) {
-    return res.status(404).json({ error: "File not found or unauthorized" });
-  }
+    if (!file || file.userId !== userId) {
+      res.status(404).json({ error: "File not found or unauthorized" });
+      return;
+    }
 
-  res.json({
-    id: file.id,
-    title: file.title,
-    description: file.description,
-    status: file.status,
-    extracted_data: file.extracted_data,
-    uploaded_at: file.uploaded_at,
-    original_filename: file.original_filename,
-  });
+    res.json({
+      id: file.id,
+      title: file.title,
+      description: file.description,
+      status: file.status,
+      extracted_data: file.extracted_data,
+      uploaded_at: file.uploaded_at,
+      original_filename: file.original_filename,
+    });
+  } catch (error) {}
 };
