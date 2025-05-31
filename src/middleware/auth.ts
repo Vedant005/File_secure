@@ -11,17 +11,17 @@ export const authenticateToken = (
 
   if (!token) {
     res.status(401).json({ message: "Access token required" });
-    return; // Add return to stop execution
+    return;
   }
 
   const jwtSecret = process.env.JWT_SECRET;
   if (!jwtSecret) {
     res.status(500).json({ message: "JWT Secret not configured" });
-    return; // Add return to stop execution
+    return;
   }
 
   try {
-    const payload = jwt.verify(token, jwtSecret); // jwtSecret is now ensured to be string
+    const payload = jwt.verify(token, jwtSecret);
     (req as any).user = payload;
     next();
   } catch {

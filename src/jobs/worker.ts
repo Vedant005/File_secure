@@ -10,7 +10,10 @@ new Worker("fileQueue", async (job) => {
 
   if (!file) return;
 
-  await prisma.file.upadte({ where: { id: fileId } });
+  await prisma.file.update({
+    where: { id: fileId },
+    data: { status: "processing" },
+  });
 
   try {
     const fileBuffer = await fs.promises.readFile(file.storage_path);
