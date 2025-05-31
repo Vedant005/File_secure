@@ -1,25 +1,27 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 
 export const authenticateToken = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   const authHeader = req.headers["authorization"];
   const token = authHeader?.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: "Access token required" });
+    res.status(401).json({ message: "Access token required" });
+    return; // Add return to stop execution
   }
 
   const jwtSecret = process.env.JWT_SECRET;
   if (!jwtSecret) {
-    return res.status(500).json({ message: "JWT Secret not configured" });
+    res.status(500).json({ message: "JWT Secret not configured" });
+    return; // Add return to stop execution
   }
 
   try {
-    const payload = jwt.verify(token, jwtSecret);
+    const payload = jwt.verify(token, jwtSecret); // jwtSecret is now ensured to be string
     (req as any).user = payload;
     next();
   } catch {
