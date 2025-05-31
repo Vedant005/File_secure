@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 import { prisma } from "../prisma";
 import { generateToken } from "../utils/jwtToken";
 
@@ -20,7 +20,7 @@ export const loginUser = async (req: Request, res: Response) => {
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    res.status(401).json({ message: "Invalid credentials" });
+    return res.status(401).json({ message: "Invalid credentials" });
   }
 
   const token = generateToken(user.id);
