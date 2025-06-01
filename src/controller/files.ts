@@ -2,13 +2,12 @@ import { Request, Response, RequestHandler } from "express";
 import { prisma } from "../prisma";
 import { fileQueue } from "../jobs/queue";
 
+// Upload File
 export const uploadFile = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    console.log(req);
-
     const userId = req.user?.id;
 
     const { title, description } = req.body;
@@ -34,6 +33,7 @@ export const uploadFile = async (
       },
     });
 
+    // BullMQ queue
     await fileQueue.add("processFile", { fileId: newFile.id });
 
     res.status(201).json({ fileId: newFile.id, status: "uploaded" });
@@ -42,6 +42,7 @@ export const uploadFile = async (
   }
 };
 
+// Get File Status
 export const getFileStatus = async (
   req: Request,
   res: Response
