@@ -3,6 +3,11 @@ import { prisma } from "../prisma";
 import { fileQueue } from "../jobs/queue";
 
 // Upload File
+/**
+ * Handle file upload by an authenticated user and enqueue it for processing
+ * @param {Request} req - Express request object containing the file and metadata (title, description)
+ * @param {Response} res - Express response object returning file ID and upload status
+ */
 export const uploadFile = async (
   req: Request,
   res: Response
@@ -43,6 +48,11 @@ export const uploadFile = async (
 };
 
 // Get File Status
+/**
+ * Fetch the status and metadata of a user's uploaded file
+ * @param {Request} req - Express request object with the file ID as a route param
+ * @param {Response} res - Express response object returning file details and processing status
+ */
 export const getFileStatus = async (
   req: Request,
   res: Response
@@ -73,5 +83,7 @@ export const getFileStatus = async (
       uploaded_at: file.uploaded_at,
       original_filename: file.original_filename,
     });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
