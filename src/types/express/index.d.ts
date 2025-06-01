@@ -1,19 +1,14 @@
-import { Request } from "express";
-import * as multer from "multer";
-import { JwtPayload } from "jsonwebtoken";
 import { User } from "@prisma/client";
-// type User = {
-//   id: number;
-//   email: string;
-//   password: string;
-// };
-import "express";
+import * as express from "express";
 
+// types defined for user and file as Express Request object does not include the user property
 declare global {
   namespace Express {
     interface Request {
-      user?: { id: number };
+      user?: User;
       file?: Express.Multer.File;
     }
   }
 }
+
+export {};
