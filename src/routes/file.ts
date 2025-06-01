@@ -5,6 +5,8 @@ import { getFileStatus, uploadFile } from "../controller/files";
 
 const router = Router();
 
+// File uploading and handling routes
+
 const upload = multer({
   dest: "./src/uploads/",
   limits: { fileSize: 10 * 1024 * 1024 },
