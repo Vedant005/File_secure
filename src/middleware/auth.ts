@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 
+// Middleware to authenticate user using jwt token generated during login process
 export const authenticateToken = (
   req: Request,
   res: Response,
