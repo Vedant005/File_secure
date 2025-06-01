@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 
-// Middleware to authenticate user using jwt token generated during login process
+/**
+ * Middleware to authenticate user using JWT token
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Callback to pass control to the next middleware
+ */
 export const authenticateToken = (
   req: Request,
   res: Response,
